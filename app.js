@@ -20,19 +20,31 @@ app.get('/create',async(req,res)=>{
     res.send(user);
 })
 
-app.get('/create/post',async(req,res)=>{
- let post=await postModel.create({
-        postdata:"hello saare keso ho",
-        user:"4545325fdgdgdggfgfg"
+app.get('/create/post', async (req, res) => {
+    try {
+        
+        let user = await userModel.findOne({ username: "dhruv" });
 
-    })
+        if (!user) {
+            return res.status(400).send({ error: "User not found" });
+        }
 
-  let user=await userModel.findOne({_id:"4545325fdgdgdggfgfg"})
+        
+        let post = await postModel.create({
+            postdata: "hello saare keso ho",
+            user: user._id 
+        });
 
-  user.posts.push(post._id);
-  await user.save();
-  res.send({post,user});
- })
+        
+        user.posts.push(post._id);
+        await user.save();
+
+        res.send({ post, user });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
+
  
 
 
